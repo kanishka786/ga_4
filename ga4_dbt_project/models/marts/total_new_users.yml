@@ -1,0 +1,57 @@
+version: 2
+
+models:
+  - name: total_new_users
+    description: "Model to calculate new users by device category, location, and traffic source based on the user's first interaction with the site."
+
+    columns:
+      - name: device_category
+        description: "The device category used by the user during the session."
+        tests:
+          - not_null
+          - relationships:
+              to: "{{ ref('dim_device_category') }}"
+              field: device_category
+
+      - name: geo_country
+        description: "The country where the user was located during the session."
+        tests:
+          - not_null
+          - relationships:
+              to: "{{ ref('dim_location') }}"
+              field: country_code
+
+      - name: geo_region
+        description: "The region or state where the user was located during the session."
+        tests:
+          - relationships:
+              to: "{{ ref('dim_location') }}"
+              field: region_name
+
+      - name: geo_city
+        description: "The city where the user was located during the session."
+        tests:
+          - not_null
+          - relationships:
+              to: "{{ ref('dim_location') }}"
+              field: city_name
+
+      - name: traffic_source
+        description: "The source of the traffic (e.g., campaign, source, medium)."
+        tests:
+          - not_null
+
+      - name: event_date
+        description: "The date when the session started. Used as a foreign key to join with the date dimension."
+        tests:
+          - not_null
+          - relationships:
+              to: "{{ ref('dim_date') }}"
+              field: date
+
+      - name: new_users_ct
+        description: "The count of distinct new users (based on user_pseudo_id) for the given session."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"  # Ensure that the number of new users is non-negative

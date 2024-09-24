@@ -1,0 +1,11 @@
+[sqlfluff]
+dialect = bigquery
+
+[sqlfluff:rules]
+max_line_length = 120  # Example rule to set max line length
+
+[sqlfluff:templater]
+templater = dbt  # Use dbt templater
+
+[sqlfluff:templater:dbt]
+profiles_dir = .  # Path to your dbt profiles directory

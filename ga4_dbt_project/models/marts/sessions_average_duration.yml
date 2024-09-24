@@ -1,0 +1,52 @@
+version: 2
+
+models:
+  - name: sessions_average_duration
+    description: "Model to calculate the average session duration by event date, device category, location, and traffic source based on session duration in GA4 event data."
+
+    columns:
+      - name: event_date
+        description: "The date when the session occurred. Used as a foreign key to join with the date dimension."
+        tests:
+          - not_null
+          - relationships:
+              to: "{{ ref('dim_date') }}"
+              field: date
+
+      - name: device_category
+        description: "The category of the device used during the session (e.g., mobile, tablet, desktop)."
+        tests:
+          - not_null
+          - relationships:
+              to: "{{ ref('dim_device_category') }}"
+              field: device_category
+
+      - name: geo_country
+        description: "The country where the session originated."
+        tests:
+          - not_null
+          - relationships:
+              to: "{{ ref('dim_location') }}"
+              field: country_code
+
+      - name: geo_region
+        description: "The region (state/province) where the session originated."
+        tests:
+          - relationships:
+              to: "{{ ref('dim_location') }}"
+              field: region_name
+
+      - name: geo_city
+        description: "The city where the session originated."
+        tests:
+          - not_null
+          - relationships:
+              to: "{{ ref('dim_location') }}"
+              field: city_name
+
+      - name: avg_session_duration_seconds
+        description: "The average duration of sessions, measured in seconds."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"  # Ensure session durations are not negative

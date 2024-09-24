@@ -1,0 +1,57 @@
+version: 2
+
+models:
+  - name: total_sessions_with_search
+    description: "Model to calculate the total number of sessions that included a search event, grouped by date, device category, location, and traffic source."
+
+    columns:
+      - name: event_date
+        description: "The date of the session. Used as a foreign key to join with the date dimension."
+        tests:
+          - not_null
+          - relationships:
+              to: "{{ ref('dim_date') }}"
+              field: date
+
+      - name: device_category
+        description: "The device category used by the user during the session (e.g., mobile, tablet, desktop)."
+        tests:
+          - not_null
+          - relationships:
+              to: "{{ ref('dim_device_category') }}"
+              field: device_category
+
+      - name: geo_country
+        description: "The country where the user was located during the session."
+        tests:
+          - not_null
+          - relationships:
+              to: "{{ ref('dim_location') }}"
+              field: country_code
+
+      - name: geo_region
+        description: "The region or state where the user was located during the session."
+        tests:
+          - relationships:
+              to: "{{ ref('dim_location') }}"
+              field: region_name
+
+      - name: geo_city
+        description: "The city where the user was located during the session."
+        tests:
+          - not_null
+          - relationships:
+              to: "{{ ref('dim_location') }}"
+              field: city_name
+
+      - name: traffic_source
+        description: "The source of the traffic (e.g., campaign, source, medium)."
+        tests:
+          - not_null
+
+      - name: total_sessions_with_search_ct
+        description: "The total number of unique sessions that included a search event."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"  # Ensure total sessions count is not negative

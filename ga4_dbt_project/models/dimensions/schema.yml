@@ -1,0 +1,49 @@
+version: 2
+
+models:
+  - name: dim_date
+    description: "Dimension table for dates, including year, month, day, and other time-based attributes."
+    columns:
+      - name: date
+        description: "Specific date."
+        tests:
+          - not_null
+          - unique
+      - name: year
+        description: "Year part of the date."
+      - name: month
+        description: "Month part of the date."
+      - name: day
+        description: "Day part of the date."
+      - name: quarter
+        description: "Quarter of the year (1 to 4)."
+      - name: week_of_year
+        description: "Week number of the year (1 to 52)."
+
+  - name: dim_device_category
+    description: "Device category dimension table to classify devices into types like mobile, tablet, desktop, etc."
+    columns:
+      - name: device_category
+        description: "The device category, such as mobile, tablet, or desktop."
+        tests:
+          - not_null
+      - name: device_description
+        description: "A descriptive label for the device category."
+
+  - name: dim_location
+    description: "Location dimension table with hierarchical data for continent, country, region, and city."
+    columns:
+      - name: continent_code
+        description: "The continent code (e.g., NA for North America)."
+        tests:
+          - not_null
+      - name: country_code
+        description: "The country code (e.g., US for United States)."
+        tests:
+          - not_null
+      - name: region_name
+        description: "The name of the region or state."
+      - name: city_name
+        description: "The name of the city."
+        tests:
+          - not_null
